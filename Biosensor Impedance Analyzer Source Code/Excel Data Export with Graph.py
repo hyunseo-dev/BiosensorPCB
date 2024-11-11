@@ -405,8 +405,6 @@ def plot_data(data):
     plt.ylim(-180.0, 180.0)
     
     plt.grid(True)
-
-    plt.grid(True)
     
     plt.subplot(2, 2, 4)
     plt.scatter(df['Frequency'], df['Resistance'], label='Resistance', color='purple', marker='D')
