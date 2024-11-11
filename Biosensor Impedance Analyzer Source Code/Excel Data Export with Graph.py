@@ -356,7 +356,7 @@ def plot_data(data):
 
     # 5. measurement_type에 따른 그래프 제목 설정
     if measurement_type_local == 'Rcal':
-        suptitle = "Rcal 임피던스 측정 결과"
+        suptitle = "Rcal 위치 임피던스 측정 결과"
     elif measurement_type_local == 'COB':
         suptitle = f"COB 임피던스 측정 결과 / 설정된 X축 Address : {xAddrStr}, Y축 Address : {yAddrStr} / 그룹 {group_selected} 선택"
     else:
@@ -388,10 +388,10 @@ def plot_data(data):
     formatter = ScalarFormatter(useOffset=False)
     ax.yaxis.set_major_formatter(formatter)
     
-    # # Y축 범위 설정(플로팅 범위 고정)
-    # z_min = df['|Z|'].min()
-    # z_max = df['|Z|'].max()
-    # plt.ylim(z_min * 0.9, z_max * 1.1)
+    # Y축 범위 설정(플로팅 범위 고정)
+    z_min = df['|Z|'].min()
+    z_max = df['|Z|'].max()
+    plt.ylim(z_min * 0.9, z_max * 1.1)
 
     plt.grid(True)
     
@@ -400,6 +400,12 @@ def plot_data(data):
     plt.title('Frequency vs Phase (Degrees)')
     plt.xlabel('Frequency (Hz)')
     plt.ylabel('Phase (Degrees)')
+
+    # Y축 범위 설정(플로팅 범위 고정)
+    plt.ylim(-180.0, 180.0)
+    
+    plt.grid(True)
+
     plt.grid(True)
     
     plt.subplot(2, 2, 4)
