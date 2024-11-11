@@ -503,13 +503,21 @@ void frequencySweepRaw(int startFreq, int frequencyUnit, int numIncrements) {
     double impedance = 1 / (magnitude * gain[i]); // 보정된 임피던스 계산
     double rawPhase = atan2(imag, real) * (180.0 / M_PI); // 측정 위상 (degrees)
 
-    // 측정된 rawPhase를 시스템 위상 방식에 맞추어 보정
+    // rawPhase 위상 범위 조절 (-180, 180] -> [0, 360)
+        if (rawPhase < 0) {
+            rawPhase = rawPhase + 360.0;
+        } else {
+            rawPhase = rawPhase;
+        }
+
+    // 측정된 rawPhase를 시스템 위상에 보정
     double correctedPhase;
     correctedPhase = rawPhase - phase[i];
 
-    if (correctedPhase < 0.0) {
+    // correctedPhase를 [-180, 180) 범위로 정규화(편리한 위상 확인 목적)
+    if (correctedPhase < -180.0) {
         correctedPhase += 360.0;
-    } else if (correctedPhase >= 360.0) {
+    } else if (correctedPhase >= 180.0) {
         correctedPhase -= 360.0;
     }
 
