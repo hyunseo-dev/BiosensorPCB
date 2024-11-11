@@ -520,16 +520,12 @@ void frequencySweepRaw(int startFreq, int frequencyUnit, int numIncrements) {
 
     // 측정된 rawPhase를 시스템 위상 방식에 맞추어 보정
     double correctedPhase;
-    if (real > 0 && imag >= 0) {
-      correctedPhase = rawPhase - phase[i];
-    } else if (real < 0 && imag >= 0) {
-      correctedPhase = (180.0 + rawPhase) - phase[i];
-    } else if (real < 0 && imag < 0) {
-      correctedPhase = (180.0 + rawPhase) - phase[i];
-    } else if (real > 0 && imag < 0) {
-      correctedPhase = (360.0 + rawPhase) - phase[i];
-    } else {
-      correctedPhase = rawPhase - phase[i];
+    correctedPhase = rawPhase - phase[i];
+
+    if (correctedPhase < 0.0) {
+        correctedPhase += 360.0;
+    } else if (correctedPhase >= 360.0) {
+        correctedPhase -= 360.0;
     }
 
     // 보정된 위상을 이용한 실수(Rreal)와 허수(Ximaginary) 성분 계산
