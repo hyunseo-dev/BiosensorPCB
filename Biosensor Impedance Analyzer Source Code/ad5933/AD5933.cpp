@@ -568,15 +568,24 @@ bool AD5933::calibrate(double gain[], double phase[], int ref, int n) {
     // For each point in the sweep, calculate the gain factor and phase
     // TODO : real value가 0도 일때 경우 위상 보정 추가
     for (int i = 0; i < n; i++) {
-        gain[i] = (1.0 / ref) / sqrt(pow(real[i], 2) + pow(imag[i], 2));
-        
-        // Calculate the initial phase in degrees
-        double rawPhase = atan2(imag[i], real[i]) * (180.0 / M_PI);
-        
-        // Convert rawPhase from (-180, 180] to [0, 360)
-        if (rawPhase < 0) {
-            phase[i] = rawPhase + 360.0;
-        } else {
+        gain[i] = (double)(1.0 / ref) / sqrt(pow(real[i], 2) + pow(imag[i], 2));
+
+        // Calculate the phase in degrees based on the quadrant
+        double rawPhase = atan2(imag[i], real[i]) * (180.0 / M_PI); // Initial phase calculation
+        if (real[i] > 0 && imag[i] >= 0) {
+            // First quadrant (positive real, positive imaginary)
+            phase[i] = rawPhase;
+        } else if (real[i] < 0 && imag[i] >= 0) {
+            // Second quadrant (negative real, positive imaginary)
+            phase[i] = 180.0 + rawPhase;
+        } else if (real[i] < 0 && imag[i] < 0) {
+            // Third quadrant (negative real, negative imaginary)
+            phase[i] = 180.0 + rawPhase;
+        } else if (real[i] > 0 && imag[i] < 0) {
+            // Fourth quadrant (positive real, negative imaginary)
+            phase[i] = 360.0 + rawPhase;
+        } else { 
+            // If one of the values is zero, set phase directly
             phase[i] = rawPhase;
         }
     }
@@ -610,19 +619,25 @@ bool AD5933::calibrate(double gain[], double phase[], int real[], int imag[],
     // For each point in the sweep, calculate the gain factor and adjusted phase
     // TODO : real value가 0도 일때 경우 위상 보정 추가
     for (int i = 0; i < n; i++) {
-        gain[i] = (1.0 / ref) / sqrt(pow(real[i], 2) + pow(imag[i], 2));
+        gain[i] = (double)(1.0 / ref) / sqrt(pow(real[i], 2) + pow(imag[i], 2));
         
         // Calculate the initial phase in degrees
         double rawPhase = atan2(imag[i], real[i]) * (180.0 / M_PI);
         
-        // Convert rawPhase from (-180, 180] to [0, 360)
-        if (rawPhase < 0) {
-            phase[i] = rawPhase + 360.0;
-        } else {
+        // Adjust phase based on the quadrant
+        if (real[i] > 0 && imag[i] > 0) { // First quadrant
+            phase[i] = rawPhase;
+        } else if (real[i] < 0 && imag[i] > 0) { // Second quadrant
+            phase[i] = 180 + rawPhase;
+        } else if (real[i] < 0 && imag[i] < 0) { // Third quadrant
+            phase[i] = 180 + rawPhase;
+        } else if (real[i] > 0 && imag[i] < 0) { // Fourth quadrant
+            phase[i] = 360 + rawPhase;
+        } else { 
+            // If one of the values is zero, set phase directly
             phase[i] = rawPhase;
         }
     }
-
 
     return true;
 }
